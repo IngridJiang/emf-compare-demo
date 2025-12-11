@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+    <groupId>demo</groupId>
+    <artifactId>emf-compare-demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <!-- 关键：额外的仓库，用来拿 EMF Compare -->
+    <repositories>
+        <repository>
+            <id>jabylon-emf-compare</id>
+            <url>https://www.jabylon.org/maven</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- EMF Common -->
+        <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>org.eclipse.emf.common</artifactId>
+            <version>2.43.0</version>
+        </dependency>
+
+        <!-- EMF Ecore -->
+        <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>org.eclipse.emf.ecore</artifactId>
+            <version>2.41.0</version>
+        </dependency>
+
+        <!-- EMF XMI 持久化 -->
+        <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+            <version>2.16.0</version>
+        </dependency>
+
+        <!-- EMF Compare 核心 -->
+        <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>compare</artifactId>
+            <version>3.0.0</version>
+            <exclusions>
+                <!-- 排除旧版本的 ecore，使用我们上面声明的新版本 -->
+                <exclusion>
+                    <groupId>org.eclipse.emf</groupId>
+                    <artifactId>ecore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.emf</groupId>
+                    <artifactId>common</artifactId>
+                </exclusion>
+                <!-- 排除找不到的 xmi 依赖 -->
+                <exclusion>
+                    <groupId>org.eclipse.emf.ecore</groupId>
+                    <artifactId>xmi</artifactId>
+                </exclusion>
+                <!-- 排除找不到的 equinox app -->
+                <exclusion>
+                    <groupId>org.eclipse.equinox</groupId>
+                    <artifactId>app</artifactId>
+                </exclusion>
+                <!-- 排除其他可能有问题的旧版 Eclipse 运行时依赖 -->
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Google Guava (required by EMF Compare) - using older version for compatibility -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+
+        <!-- JUnit 5 for testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.1</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Configure Surefire for Java 17 compatibility -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
